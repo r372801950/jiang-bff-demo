@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 // const TerserPlugin = require('terser-webpack-plugin');
 const layerDependencies = [
   'awilix',
@@ -138,5 +139,14 @@ module.exports = {
   },
   devtool: 'source-map',plugins: [
     new CleanWebpackPlugin(),
+    new CopyPlugin({//好使，直接复制views，之前tree-shaking给摇掉了
+      patterns: [
+        {
+          from: 'views',
+          to: 'views',
+          noErrorOnMissing: true
+        },
+      ],
+    }),
   ]
 };

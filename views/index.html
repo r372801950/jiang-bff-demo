@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Document</title>
-    <link rel="icon" href="/favicon.ico" />
-    <script defer="defer" src="/scripts/runtime.ea156.bundule.js"></script>
-    <script defer="defer" src="/scripts/main.7aeb7.bundule.js"></script>
-    <link href="/styles/main.4cd8a.css" rel="stylesheet" />
+<!--    将您的静态资源路径从相对路径改为使用 S3 基础 URL-->
+    <link rel="icon" href="{{s3BaseUrl}}/favicon.ico" />
+    <script defer="defer" src="{{s3BaseUrl}}/scripts/runtime.ea156.bundule.js"></script>
+    <script defer="defer" src="{{s3BaseUrl}}/scripts/main.7aeb7.bundule.js"></script>
+    <link href="{{s3BaseUrl}}/styles/main.4cd8a.css" rel="stylesheet" />
   </head>
   <body>
     HI {{data}}

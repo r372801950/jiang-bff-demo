@@ -48,7 +48,7 @@ configure({
 // });
 const app = new Koa();
 const logger = getLogger('cheese');
-const { port, viewDir, memoryFlag, staticDir } = config;
+const { viewDir, memoryFlag, staticDir } = config;
 
 app.context.render = co.wrap(
   render({

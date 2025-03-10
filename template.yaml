@@ -11,6 +11,7 @@ Globals:
       Variables:
         NODE_OPTIONS: '--enable-source-maps'
         NODE_ENV: 'production'
+        S3_BASE_URL: !Sub 'https://${FrontendBucket}.s3.${AWS::Region}.amazonaws.com'
     EphemeralStorage:
       Size: 512
   Api:
@@ -65,6 +66,7 @@ Resources:
       BinaryMediaTypes:
         - 'image/*'
         - 'multipart/form-data'
+        - 'text/html'  # 在 Api 资源中添加 HTML 作为二进制类型
       Auth:
         DefaultAuthorizer: NONE
 
@@ -84,6 +86,14 @@ Resources:
             BucketName: aladdinagi-assets
         - VPCAccessPolicy: {}
       Events:
+        RootPathEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+            RestApiId: !Ref Api
+            Auth:
+              Authorizer: NONE
         ApiEvent:
           Type: Api
           Properties:
@@ -93,6 +103,11 @@ Resources:
             Auth:
               Authorizer: NONE
       AutoPublishAlias: live
+      Environment:
+        Variables:
+          NODE_OPTIONS: '--enable-source-maps'
+          NODE_ENV: 'production'
+          S3_BASE_URL: !Sub 'https://${FrontendBucket}.s3.${AWS::Region}.amazonaws.com'
 
 Outputs:
   ApiEndpoint:

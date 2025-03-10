@@ -76,3 +76,30 @@ else
     echo "❌ Sam build failed!"
     exit 1
 fi
+
+# 获取 S3 桶名并上传静态资源
+echo "🔍 Getting S3 bucket name..."
+STACK_NAME=$(aws cloudformation describe-stacks --query "Stacks[?contains(StackName, 'bff-stack')].StackName" --output text)
+
+if [ -z "$STACK_NAME" ]; then
+    echo "⚠️ Could not find stack name. Please upload static assets manually."
+else
+    S3_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" --output text)
+
+    if [ -z "$S3_BUCKET_NAME" ]; then
+        echo "⚠️ Could not find S3 bucket name. Please upload static assets manually."
+    else
+        echo "📤 Uploading static assets to S3 bucket: $S3_BUCKET_NAME..."
+
+        # 检查 assets 目录是否存在
+        if [ -d "assets" ]; then
+            # 上传静态资源到 S3
+            aws s3 cp assets/ s3://$S3_BUCKET_NAME/ --recursive --acl public-read
+            echo "✅ Static assets uploaded to S3"
+        else
+            echo "⚠️ Assets directory not found. Nothing to upload."
+        fi
+    fi
+fi
+
+echo "🎉 Deployment completed!"
