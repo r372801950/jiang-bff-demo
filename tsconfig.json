@@ -13,6 +13,7 @@
     "paths": {
       "@interfaces/*": ["interface/*"],
       "@config/*": ["config/*"],
+      "@routers/*": ["routers/*"],
       "@middlewares/*": ["middlewares/*"]
     }
   },

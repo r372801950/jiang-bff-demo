@@ -10,6 +10,7 @@ Globals:
     Environment:
       Variables:
         NODE_OPTIONS: '--enable-source-maps'
+        NODE_ENV: 'production'
     EphemeralStorage:
       Size: 512
   Api:
@@ -30,6 +31,32 @@ Resources:
       CompatibleRuntimes:
         - nodejs20.x
       RetentionPolicy: Retain
+
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub '${FrontendBucket.Arn}/*'
 
   Api:
     Type: AWS::Serverless::Api
@@ -74,3 +101,9 @@ Outputs:
   FunctionArn:
     Description: Lambda Function ARN
     Value: !GetAtt NestjsFunction.Arn
+  FrontendBucketName:
+    Description: Name of the S3 bucket for frontend assets
+    Value: !Ref FrontendBucket
+  FrontendBucketWebsite:
+    Description: URL of the S3 bucket website
+    Value: !GetAtt FrontendBucket.WebsiteURL
